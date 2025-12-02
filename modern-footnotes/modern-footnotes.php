@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Modern Footnotes
+Plugin Name: Modern Footnotes (ISU customized)
 Plugin URI:  http://prismtechstudios.com/modern-footnotes
 Text Domain: modern-footnotes
-Description: Add inline footnotes to your post via the footnote icon on the toolbar for editing posts and pages. Or, use the [mfn] or [modern_footnote] shortcodes [mfn]like this[/mfn].
+Description: Add inline footnotes to your post via the footnote icon on the toolbar for editing posts and pages. Or, use the [mfn] or [modern_footnote] shortcodes [mfn]like this[/mfn]. 
 Version:     1.4.20
 Update URI: false
 Author:      Prism Tech Studios
