@@ -293,7 +293,13 @@ function modern_footnotes_get_post_scope_id() {
       $global_post_id = $global_post;
     }
     if (isset($GLOBALS['modern_footnotes_active_query'])) {
-      return spl_object_hash($GLOBALS['modern_footnotes_active_query']) . '_' . $global_post_id;
+      $active_query = $GLOBALS['modern_footnotes_active_query'];
+      if (is_object($active_query) && property_exists($active_query, 'query_vars')) {
+        $query_id = md5(serialize($active_query->query_vars));
+      } else {
+        $query_id = 'noquery';
+      }
+      return $query_id . '_' . $global_post_id;
     } else {
       return 'post_' . $global_post_id;
     }
