@@ -280,35 +280,36 @@ function modern_footnotes_check_post_query($scoped_post, $scoped_query = null) {
 
 // return an ID that can be used to identify the unique post that we are in -- used for listing multiple posts on the 
 // same page, including when posts are nested with plugins like DisplayPosts
-function modern_footnotes_get_post_scope_id() {
-  if (isset($GLOBALS['post'])) {
-    $global_post = $GLOBALS['post'];
-    if (is_object($global_post)) {
-      if (property_exists($global_post, 'ID')) {
-        $global_post_id = $global_post->ID;
+if ( ! function_exists( 'modern_footnotes_get_post_scope_id' ) ) {
+  function modern_footnotes_get_post_scope_id() {
+    if (isset($GLOBALS['post'])) {
+      $global_post = $GLOBALS['post'];
+      if (is_object($global_post)) {
+        if (property_exists($global_post, 'ID')) {
+          $global_post_id = $global_post->ID;
+        } else {
+          // some plugins, like relevanssi, modify the 'post' object to something other than a WP_Post instance (https://wordpress.org/support/topic/v1-4-18-breaks-search/)
+          $global_post_id = spl_object_hash($global_post);
+        }
       } else {
-        // some plugins, like relevanssi, modify the 'post' object to something other than a WP_Post instance (https://wordpress.org/support/topic/v1-4-18-breaks-search/)
-        $global_post_id = spl_object_hash($global_post);
+        $global_post_id = $global_post;
+      }
+      if (isset($GLOBALS['modern_footnotes_active_query'])) {
+        $active_query = $GLOBALS['modern_footnotes_active_query'];
+        if (is_object($active_query) && property_exists($active_query, 'query_vars')) {
+          $query_id = md5(serialize($active_query->query_vars));
+        } else {
+          $query_id = 'noquery';
+        }
+        return $query_id . '_' . $global_post_id;
+      } else {
+        return 'post_' . $global_post_id;
       }
     } else {
-      $global_post_id = $global_post;
+      return 'na';
     }
-    if (isset($GLOBALS['modern_footnotes_active_query'])) {
-      $active_query = $GLOBALS['modern_footnotes_active_query'];
-      if (is_object($active_query) && property_exists($active_query, 'query_vars')) {
-        $query_id = md5(serialize($active_query->query_vars));
-      } else {
-        $query_id = 'noquery';
-      }
-      return $query_id . '_' . $global_post_id;
-    } else {
-      return 'post_' . $global_post_id;
-    }
-  } else {
-    return 'na';
   }
 }
-
 // replace <mfn> HTML tags added by Gutenberg/block editor to [mfn] shortcodes
 // When multiple formats are applied, Gutenberg can have multiple <mfn> tags for one footnote, so we'll have to iterate through the text and group sibling tags together (see https://github.com/seankwilliams/modern-footnotes/issues/14)
 function modern_footnotes_replace_mfn_tag_with_shortcode( $content ) {
